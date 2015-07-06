@@ -2,11 +2,11 @@ name:                andb
 version:             0.1.0.0
 synopsis:            Searchable database for names
 description:         Please see README.md
-homepage:            http://github.com/hmrm/
+homepage:            http://github.com/hmrm/CASite
 license:             BSD3
 license-file:        LICENSE
-author:              Your name here
-maintainer:          your.address@example.com
+author:              Haney Maxwell
+maintainer:          hmrmaxwell+casite@gmail.com.com
 -- copyright:           
 category:            Web
 build-type:          Simple
@@ -20,25 +20,26 @@ library
                      , postgresql-simple
                      , servant
                      , aeson
+		     , unix
   default-language:    Haskell2010
 
-executable new-template-exe
+executable andb-exe
   hs-source-dirs:      app
   main-is:             Main.hs
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
-                     , new-template
+                     , andb
   default-language:    Haskell2010
 
-test-suite new-template-test
+test-suite andb-test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
   main-is:             Spec.hs
   build-depends:       base
-                     , new-template
+                     , andb
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   default-language:    Haskell2010
 
 source-repository head
   type:     git
-  location: https://github.com/name/project
+  location: https://github.com/hmrm/CASite
