@@ -2,7 +2,8 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module DBAccess
-       ( initializeDB ) where
+       ( initializeDB
+       , addNames) where
 
 import Config
 import Control.Exception
@@ -16,6 +17,9 @@ connect = connectPostgreSQL . pack . postgresConnectString
 duplicateTableSqlState :: ByteString
 duplicateTableSqlState = "42P07"
 
+uniqueViolationSqlState :: ByteString
+uniqueViolationSqlState = "23505"
+
 -- TODO: Add index generation
 -- TODO: Document
 -- TODO: Separate into separate functions
@@ -27,8 +31,17 @@ initializeDB conf = do
     where
       handleExists (e :: SqlError)
         | sqlState e == duplicateTableSqlState = Just ()
-        | otherwise                          = Nothing
-      runQuery conn = (execute_ conn " CREATE TABLE ids (         \
-                                     \   id   SERIAL PRIMARY KEY, \
-                                     \   name TEXT NOT NULL)      ")
+        | otherwise                            = Nothing
+      runQuery conn = (execute_ conn " CREATE TABLE ids (          \
+                                     \   id   SERIAL PRIMARY KEY,  \
+                                     \   name TEXT NOT NULL UNIQUE)")
       ignoreError _ = return (-1)
+
+addNames :: Connection -> [ByteString] -> IO Int64
+addNames conn names = catchJust handleDuplicate (runQuery conn) ignoreError
+  where
+    handleDuplicate (e :: SqlError)
+      | sqlState e == uniqueViolationSqlState = Just ()
+      | otherwise                             = Nothing
+    runQuery conn = executeMany conn "INSERT INTO ids(name) VALUES (?)" (fmap Only names)
+    ignoreError _ = return (-1)
