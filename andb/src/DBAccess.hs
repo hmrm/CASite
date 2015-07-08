@@ -3,7 +3,8 @@
 
 module DBAccess
        ( initializeDB
-       , addNames) where
+       , addNames
+       , getAllNames) where
 
 import Config
 import Control.Exception
@@ -45,3 +46,8 @@ addNames conn names = catchJust handleDuplicate (runQuery conn) ignoreError
       | otherwise                             = Nothing
     runQuery conn = executeMany conn "INSERT INTO ids(name) VALUES (?)" (fmap Only names)
     ignoreError _ = return (-1)
+
+getAllNames :: Connection -> IO (Either SqlError [ByteString])
+getAllNames conn = try $ do
+  result <- query_ conn "SELECT name FROM ids"
+  return $ fmap (\(Only x) -> x) result
