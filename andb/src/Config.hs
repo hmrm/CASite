@@ -5,14 +5,20 @@ module Config (Config(postgresConnectString), readConfig) where
 import System.Posix.Env
 import Data.Maybe
 
-data Config = Config { postgresConnectString :: String } deriving (Show)
+-- | The full configuration of the application
+data Config = Config {
+  -- | Specification for connection to postgres, see <http://www.postgresql.org/docs/9.3/static/libpq-connect.html#LIBPQ-CONNSTRING>
+  postgresConnectString :: String
+  } deriving (Show)
 
 defaultConnectString :: String
 defaultConnectString = "dbname=postgres"
 
+-- | The environment variable the value of which, if set, will be used for the connect string
 connectStringEnvVar :: String
 connectStringEnvVar = "ANDB_PG_CONNECT_STRING"
 
+-- | Reads environmnet variables to construct a config object
 readConfig :: IO Config
 readConfig = fmap (\envValue -> Config { postgresConnectString = fromMaybe defaultConnectString envValue }) $ getEnv connectStringEnvVar
 
