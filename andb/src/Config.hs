@@ -23,6 +23,8 @@ connectStringEnvVar = "ANDB_PG_CONNECT_STRING"
 -- >>> readConfig >>= print
 -- Config {postgresConnectString = "test-connect-string"}
 readConfig :: IO Config
-readConfig = fmap (\envValue -> Config { postgresConnectString = fromMaybe defaultConnectString envValue }) $ getEnv connectStringEnvVar
+readConfig = fmap (\envValue -> Config {
+                       postgresConnectString = fromMaybe defaultConnectString envValue
+                   }) $ getEnv connectStringEnvVar
 
              
